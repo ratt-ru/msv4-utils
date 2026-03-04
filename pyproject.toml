@@ -1,0 +1,33 @@
+[project]
+name = "msv4-utils"
+version = "0.1.0"
+description = "Utility methods for reasoning about Measurement Set v4"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+docs = [
+    "sphinx>=7",
+    "furo",
+    "sphinx-autodoc-typehints",
+]
+test = [
+    "pytest>=8",
+    "pytest-httpserver",
+]
+xradio = [
+    "xradio@git+https://github.com/casangi/xradio.git@main"
+]
+
+[project.scripts]
+msv4-utils = "msv4_utils.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/msv4_utils"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
