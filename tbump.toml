@@ -14,11 +14,6 @@ regex = '''
 message_template = "Bump version to {new_version}"
 tag_template = "{new_version}"
 
-# Hooks to update generated files with new version before committing
-[[before_push]]
-name = "Write release version sentinel for pre-commit hooks"
-cmd = "python -c \"from pathlib import Path; Path('.tbump_version').write_text('{new_version}')\""
-
 # Files to update with the new version
 [[file]]
 src = "pyproject.toml"
