@@ -31,10 +31,10 @@ elif backend == MSv4Backend.MEERKAT:
 ### MSv4 type constants
 
 ```python
-from msv4_utils import VISIBILITY, CORRELATED_XDS_TYPES
+from msv4_utils.msv4_types import VISIBILITY_XDS_TYPES
 
 xds_type = xds.attrs["type"]
-if xds_type in CORRELATED_XDS_TYPES:
+if xds_type in VISIBILITY_XDS_TYPES:
     print("interferometric data")
 ```
 
@@ -42,11 +42,5 @@ if xds_type in CORRELATED_XDS_TYPES:
 
 ```bash
 uv sync
-uv run pytest
-```
-
-### Build docs
-
-```bash
-uv run --extra docs sphinx-build docs docs/_build
+uv run pytest tests
 ```
