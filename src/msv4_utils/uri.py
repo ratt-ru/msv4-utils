@@ -9,12 +9,12 @@ require network access or third-party libraries.
 from __future__ import annotations
 
 import re
-from os.path import join as pjoin, isfile
 from enum import Enum
+from os.path import isfile
+from os.path import join as pjoin
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
-
 
 # CASA Table magic number: first 4 bytes of table.dat
 _CASA_MAGIC = b"\xbe\xbe\xbe\xbe"
@@ -25,6 +25,7 @@ _REDIS_MAGIC_RE = re.compile(rb"REDIS(\d{4})")
 
 # Files indicating the presence of ZARR Datasets
 _ZARR_VERSION_MARKERS = {".zattrs": 2, "zarr.json": 3}
+
 
 class MSv4Backend(Enum):
     """Known MSv4 storage backends."""

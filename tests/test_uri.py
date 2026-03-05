@@ -2,8 +2,12 @@
 
 import pytest
 
-from msv4_utils.uri import MSv4Backend, check_remote_zarr, check_rdb_magic, infer_backend
-
+from msv4_utils.uri import (
+    MSv4Backend,
+    check_rdb_magic,
+    check_remote_zarr,
+    infer_backend,
+)
 
 # ---------------------------------------------------------------------------
 # CASA Table
@@ -77,12 +81,19 @@ def test_meerkat_https_no_token():
 
 def test_meerkat_https_no_rdb(httpserver):
     # No .rdb extension -> not MeerKAT; both Zarr markers return 404 -> UNKNOWN
-    httpserver.expect_request("/obs/data.zarr/.zattrs", method="HEAD").respond_with_data("", status=404)
-    httpserver.expect_request("/obs/data.zarr/zarr.json", method="HEAD").respond_with_data("", status=404)
+    httpserver.expect_request(
+        "/obs/data.zarr/.zattrs", method="HEAD"
+    ).respond_with_data("", status=404)
+    httpserver.expect_request(
+        "/obs/data.zarr/zarr.json", method="HEAD"
+    ).respond_with_data("", status=404)
     # Assume it's Zarr in non-strict mode
     assert infer_backend(httpserver.url_for("/obs/data.zarr")) == MSv4Backend.ZARR
     # Do not assume it's zarr in strict mode
-    assert infer_backend(httpserver.url_for("/obs/data.zarr"), strict=True) == MSv4Backend.UNKNOWN
+    assert (
+        infer_backend(httpserver.url_for("/obs/data.zarr"), strict=True)
+        == MSv4Backend.UNKNOWN
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -97,18 +108,24 @@ def test_meerkat_strict_redis_magic_matches(httpserver, monkeypatch, scheme):
     actual_url = f"{scheme}://archive-gw-1.kat.ac.za/{path}"
     rdb_url = httpserver.url_for(path)
     # Substitute the mock server url for the actual url as the mock server cannot access it
-    monkeypatch.setattr("msv4_utils.uri.check_rdb_magic", lambda _: check_rdb_magic(rdb_url))
+    monkeypatch.setattr(
+        "msv4_utils.uri.check_rdb_magic", lambda _: check_rdb_magic(rdb_url)
+    )
     assert infer_backend(actual_url, strict=True) == MSv4Backend.MEERKAT
 
 
 @pytest.mark.parametrize("scheme", ["http", "https"])
 def test_meerkat_strict_redis_magic_no_match(httpserver, monkeypatch, scheme):
     path = "/obs/1234567890.rdb"
-    httpserver.expect_request(path).respond_with_data(b"\x00\x00\x00\x00\x00", status=200)
+    httpserver.expect_request(path).respond_with_data(
+        b"\x00\x00\x00\x00\x00", status=200
+    )
     real_url = f"{scheme}://archive-gw-1.kat.ac.za/{path}"
     actual_url = httpserver.url_for(path)
     # Substitute a mock server url for the actual url
-    monkeypatch.setattr("msv4_utils.uri.check_rdb_magic", lambda _: check_rdb_magic(actual_url))
+    monkeypatch.setattr(
+        "msv4_utils.uri.check_rdb_magic", lambda _: check_rdb_magic(actual_url)
+    )
     assert infer_backend(real_url, strict=True) == MSv4Backend.UNKNOWN
 
 
@@ -139,47 +156,71 @@ def test_infer_backend_remote_strict_unsupported():
 
 
 def test_remote_zarr_v2_http(httpserver):
-    httpserver.expect_request("/store/.zattrs", method="HEAD").respond_with_data("{}", status=200)
+    httpserver.expect_request("/store/.zattrs", method="HEAD").respond_with_data(
+        "{}", status=200
+    )
     assert check_remote_zarr(httpserver.url_for("/store")) is True
 
 
 def test_remote_zarr_v3_http(httpserver):
-    httpserver.expect_request("/store/zarr.json", method="HEAD").respond_with_data("{}", status=200)
+    httpserver.expect_request("/store/zarr.json", method="HEAD").respond_with_data(
+        "{}", status=200
+    )
     assert check_remote_zarr(httpserver.url_for("/store")) is True
 
 
 def test_remote_zarr_not_found_http(httpserver):
-    httpserver.expect_request("/store/.zattrs", method="HEAD").respond_with_data("", status=404)
-    httpserver.expect_request("/store/zarr.json", method="HEAD").respond_with_data("", status=404)
+    httpserver.expect_request("/store/.zattrs", method="HEAD").respond_with_data(
+        "", status=404
+    )
+    httpserver.expect_request("/store/zarr.json", method="HEAD").respond_with_data(
+        "", status=404
+    )
     assert check_remote_zarr(httpserver.url_for("/store")) is False
 
 
 def test_infer_backend_remote_zarr_v2(httpserver):
     """Resolves to Zarr in non-strict and Unknown in strict"""
-    httpserver.expect_request("/store/.zattrs", method="HEAD").respond_with_data("", status=404)
-    httpserver.expect_request("/store/zarr.json", method="HEAD").respond_with_data("", status=404)
+    httpserver.expect_request("/store/.zattrs", method="HEAD").respond_with_data(
+        "", status=404
+    )
+    httpserver.expect_request("/store/zarr.json", method="HEAD").respond_with_data(
+        "", status=404
+    )
     assert infer_backend(httpserver.url_for("/store")) == MSv4Backend.ZARR
-    assert infer_backend(httpserver.url_for("/store"), strict=True) == MSv4Backend.UNKNOWN
+    assert (
+        infer_backend(httpserver.url_for("/store"), strict=True) == MSv4Backend.UNKNOWN
+    )
 
 
 def test_infer_backend_remote_zarr_v3(httpserver):
     """Resolves to Zarr in non-strict and Unknown in strict"""
-    httpserver.expect_request("/store/.zattrs", method="HEAD").respond_with_data("", status=404)
-    httpserver.expect_request("/store/zarr.json", method="HEAD").respond_with_data("", status=404)
+    httpserver.expect_request("/store/.zattrs", method="HEAD").respond_with_data(
+        "", status=404
+    )
+    httpserver.expect_request("/store/zarr.json", method="HEAD").respond_with_data(
+        "", status=404
+    )
     assert infer_backend(httpserver.url_for("/store")) == MSv4Backend.ZARR
-    assert infer_backend(httpserver.url_for("/store"), strict=True) == MSv4Backend.UNKNOWN
+    assert (
+        infer_backend(httpserver.url_for("/store"), strict=True) == MSv4Backend.UNKNOWN
+    )
 
 
 def test_infer_backend_remote_zarr_v2_strict(httpserver):
     """Resolves to Zarr in both non-strict and strict"""
-    httpserver.expect_request("/store/.zattrs", method="HEAD").respond_with_data("{}", status=200)
+    httpserver.expect_request("/store/.zattrs", method="HEAD").respond_with_data(
+        "{}", status=200
+    )
     assert infer_backend(httpserver.url_for("/store")) == MSv4Backend.ZARR
     assert infer_backend(httpserver.url_for("/store"), strict=True) == MSv4Backend.ZARR
 
 
 def test_infer_backend_remote_zarr_v3_strict(httpserver):
     """Resolves to Zarr in both non-strict and strict"""
-    httpserver.expect_request("/store/zarr.json", method="HEAD").respond_with_data("{}", status=200)
+    httpserver.expect_request("/store/zarr.json", method="HEAD").respond_with_data(
+        "{}", status=200
+    )
     assert infer_backend(httpserver.url_for("/store")) == MSv4Backend.ZARR
     assert infer_backend(httpserver.url_for("/store"), strict=True) == MSv4Backend.ZARR
 
@@ -206,7 +247,9 @@ def test_rdb_magic_matches(httpserver):
 
 
 def test_rdb_magic_no_match(httpserver):
-    httpserver.expect_request("/data.rdb").respond_with_data(b"\x00\x00\x00\x00\x00", status=200)
+    httpserver.expect_request("/data.rdb").respond_with_data(
+        b"\x00\x00\x00\x00\x00", status=200
+    )
     assert check_rdb_magic(httpserver.url_for("/data.rdb")) is False
 
 
