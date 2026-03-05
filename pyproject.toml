@@ -31,3 +31,9 @@ packages = ["src/msv4_utils"]
 
 [tool.hatch.metadata]
 allow-direct-references = true
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.5.1",
+    "tbump>=6.11.0",
+]
