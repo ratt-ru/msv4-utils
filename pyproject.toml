@@ -15,9 +15,6 @@ test = [
     "pytest>=8",
     "pytest-httpserver",
 ]
-xradio = [
-    "xradio@git+https://github.com/casangi/xradio.git@main"
-]
 
 [project.scripts]
 msv4-utils = "msv4_utils.cli:app"
