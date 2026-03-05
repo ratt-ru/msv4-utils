@@ -21,7 +21,7 @@ _CASA_MAGIC = b"\xbe\xbe\xbe\xbe"
 
 # Matches the RDB file header "REDIS" followed by a 4-digit version number,
 # e.g. b"REDIS0006". Group 1 captures the version as bytes.
-_REDIS_MAGIC_RE = re.compile(b"REDIS(\d{4})")
+_REDIS_MAGIC_RE = re.compile(rb"REDIS(\d{4})")
 
 # Files indicating the presence of ZARR Datasets
 _ZARR_VERSION_MARKERS = {".zattrs": 2, "zarr.json": 3}
