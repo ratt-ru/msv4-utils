@@ -1,6 +1,6 @@
 [project]
 name = "msv4-utils"
-version = "0.0.1"
+version = "0.0.0"
 description = "Utility methods for reasoning about Measurement Set v4 Datasets"
 requires-python = ">=3.11"
 dependencies = []
