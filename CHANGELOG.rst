@@ -1,7 +1,7 @@
 Changelog
 =========
 
-X.Y.Z (DD-MM-YYYY)
+0.0.3 (20-05-2026)
 ------------------
 * Change MSv4Backend Enums to reference the appropriate xarray storage engine (:pr:`4`)
 * Fix detection of file://path style uris (:pr:`3`)
