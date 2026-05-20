@@ -34,6 +34,14 @@ def test_casa_table_no_table_dat(tmp_path):
     assert infer_backend(str(ms)) != MSv4Backend.CASA_TABLE
 
 
+def test_casa_table_file_uri(tmp_path):
+    """file:/// URIs should be detected as CASA_TABLE (issue #1)."""
+    ms = tmp_path / "test.ms"
+    ms.mkdir()
+    (ms / "table.dat").write_bytes(b"\xbe\xbe\xbe\xbe" + b"\x00" * 100)
+    assert infer_backend(ms.as_uri()) == MSv4Backend.CASA_TABLE
+
+
 # ---------------------------------------------------------------------------
 # Zarr (local)
 # ---------------------------------------------------------------------------
@@ -51,6 +59,22 @@ def test_zarr_v3_detected(tmp_path):
     store.mkdir()
     (store / "zarr.json").write_text("{}")
     assert infer_backend(str(store)) == MSv4Backend.ZARR
+
+
+def test_zarr_v2_file_uri(tmp_path):
+    """file:/// URIs should be detected as ZARR for Zarr v2 stores (issue #1)."""
+    store = tmp_path / "test_v2"
+    store.mkdir()
+    (store / ".zattrs").write_text("{}")
+    assert infer_backend(store.as_uri()) == MSv4Backend.ZARR
+
+
+def test_zarr_v3_file_uri(tmp_path):
+    """file:/// URIs should be detected as ZARR for Zarr v3 stores (issue #1)."""
+    store = tmp_path / "test_v3"
+    store.mkdir()
+    (store / "zarr.json").write_text("{}")
+    assert infer_backend(store.as_uri()) == MSv4Backend.ZARR
 
 
 def test_zarr_neither_marker(tmp_path):
