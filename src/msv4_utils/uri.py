@@ -28,15 +28,18 @@ _ZARR_VERSION_MARKERS = {".zattrs": 2, "zarr.json": 3}
 
 
 class MSv4Backend(Enum):
-    """Known MSv4 storage backends."""
+    """Known MSv4 storage backends.
 
-    CASA_TABLE = "casa_table"
+    The string values correspond to the appropriate xarray storage engine
+    """
+
+    CASA_TABLE = "xarray-ms:msv2"
     """CASA Measurement Set v2 stored in a CASA table directory."""
 
     ZARR = "zarr"
     """Zarr-backed MSv4 store (local or remote object store)."""
 
-    MEERKAT = "meerkat"
+    MEERKAT = "xarray-kat"
     """MeerKAT archive accessible via xarray-kat."""
 
     UNKNOWN = "unknown"
