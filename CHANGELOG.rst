@@ -1,6 +1,10 @@
 Changelog
 =========
 
+X.Y.Z (DD-MM-YYYY)
+------------------
+* Fix detection of file://path style uris (:pr:`3`)
+
 0.0.2 (05-03-2026)
 ------------------
 * Add README.md to pyproject.toml
