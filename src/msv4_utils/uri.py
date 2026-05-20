@@ -13,7 +13,7 @@ from enum import Enum
 from os.path import isfile
 from os.path import join as pjoin
 from urllib.error import HTTPError, URLError
-from urllib.parse import urlparse
+from urllib.parse import unquote, urlparse
 from urllib.request import Request, urlopen
 
 # CASA Table magic number: first 4 bytes of table.dat
@@ -80,7 +80,8 @@ def infer_backend(uri: str, *, strict: bool = False) -> MSv4Backend:
     scheme = parsed.scheme.lower()
 
     # --- CASA Table (always checked — local and cheap) ---
-    if _is_local(scheme) and _is_casa_table(uri):
+    local_path = unquote(parsed.path)
+    if _is_local(scheme) and _is_casa_table(local_path):
         return MSv4Backend.CASA_TABLE
 
     # --- MeerKAT ---
@@ -97,7 +98,7 @@ def infer_backend(uri: str, *, strict: bool = False) -> MSv4Backend:
 
     # Always perform a strict check on a local URI
     if _is_local(scheme):
-        return MSv4Backend.ZARR if _is_local_zarr(uri) else MSv4Backend.UNKNOWN
+        return MSv4Backend.ZARR if _is_local_zarr(local_path) else MSv4Backend.UNKNOWN
 
     if strict:
         if scheme in ("http", "https"):
